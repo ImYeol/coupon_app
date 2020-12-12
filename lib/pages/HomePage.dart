@@ -2,6 +2,7 @@ import 'package:coupon_app/components/BasicTitle.dart';
 import 'package:coupon_app/components/FlatBottomButton.dart';
 import 'package:coupon_app/components/HorzontalCouponListView.dart';
 import 'package:coupon_app/constants/CouponImages.dart';
+import 'package:coupon_app/pages/CouponBuildPage.dart';
 import 'package:coupon_app/pages/CouponDescriptionPage.dart';
 import 'package:coupon_app/pages/QRScanPage.dart';
 import 'package:flutter/material.dart';
@@ -77,7 +78,7 @@ class _HomePageState extends State<HomePage> {
                     onTap: () => (ctx, index) {
                       print("item selected");
                       Navigator.push(
-                          ctx,
+                          context,
                           MaterialPageRoute(
                               builder: (ctx) => CouponDescriptionPage(
                                     coupon: repository.images[index],
@@ -90,16 +91,19 @@ class _HomePageState extends State<HomePage> {
                     child: BasicTitle(
                         text: "Releasable Coupons",
                         trailing: IconButton(
-                          icon: Icon(
-                            Icons.add,
-                            color: Color(0xFFE0E0E0),
-                            size: 25.0,
-                          ),
-                          onPressed: () {
-                            print("My coupons button clicked");
-                            // go to store page
-                          },
-                        )),
+                            icon: Icon(
+                              Icons.add,
+                              color: Color(0xFFE0E0E0),
+                              size: 25.0,
+                            ),
+                            onPressed: () {
+                              print("My coupons button clicked");
+                              // go to store page
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (ctx) => CouponbuildPage()));
+                            })),
                   ),
                   HorizontalCouponListView(
                     height: _screenHeight / 5,
@@ -108,7 +112,7 @@ class _HomePageState extends State<HomePage> {
                     onTap: () => (ctx, index) {
                       print("item selected");
                       Navigator.push(
-                          ctx,
+                          context,
                           MaterialPageRoute(
                               builder: (ctx) => CouponDescriptionPage(
                                     coupon: repository.release_images[index],

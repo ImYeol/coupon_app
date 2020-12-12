@@ -5,6 +5,8 @@ import 'package:coupon_app/model/Coupon.dart';
 import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
+import 'QRScanPage.dart';
+
 class CouponDescriptionPage extends StatelessWidget {
   final Coupon coupon;
   final int couponCount;
@@ -23,27 +25,28 @@ class CouponDescriptionPage extends StatelessWidget {
           physics: const BouncingScrollPhysics(),
           slivers: [
             SliverAppBar(
-                expandedHeight: height * 3 / 5,
-                stretch: true,
-                collapsedHeight: kToolbarHeight + 1,
-                floating: true,
-                pinned: true,
-                leading: IconButton(
-                  icon: Icon(
-                    Icons.arrow_back_ios,
-                    color: Colors.white,
-                  ),
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
+              expandedHeight: height * 3 / 5,
+              stretch: true,
+              collapsedHeight: kToolbarHeight + 1,
+              floating: true,
+              pinned: true,
+              leading: IconButton(
+                icon: Icon(
+                  Icons.arrow_back_ios,
+                  color: Colors.white,
                 ),
-                flexibleSpace: FlexibleSpaceBar(
-                  stretchModes: [
-                    StretchMode.zoomBackground,
-                    StretchMode.fadeTitle
-                  ],
-                  background: getBackground(width, height),
-                )),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
+              flexibleSpace: FlexibleSpaceBar(
+                stretchModes: [
+                  StretchMode.zoomBackground,
+                  StretchMode.fadeTitle
+                ],
+                background: getBackground(width, height),
+              ),
+            ),
             SliverPadding(
               padding: EdgeInsets.symmetric(horizontal: 10.0),
               sliver: SliverList(
@@ -73,7 +76,7 @@ class CouponDescriptionPage extends StatelessWidget {
             )
           ],
         )),
-        bottomNavigationBar: getBottomButtons(width, height));
+        bottomNavigationBar: getBottomButtons(context));
   }
 
   Widget getBackground(double width, double height) {
@@ -158,12 +161,14 @@ class CouponDescriptionPage extends StatelessWidget {
     );
   }
 
-  Widget getBottomButtons(double width, double height) {
+  Widget getBottomButtons(BuildContext context) {
     return FlatBottomButton(
-      width: width,
+      width: MediaQuery.of(context).size.width,
       text: "Release",
       onPressed: () {
         print("Release button pressed");
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => QRScanPage()));
       },
     );
   }

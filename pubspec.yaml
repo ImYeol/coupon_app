@@ -36,6 +36,8 @@ dependencies:
   qr_flutter: ^3.2.0
   flutter_qr_bar_scanner: ^1.0.2
   google_fonts: ^1.1.1
+  image_picker: ^0.6.7+14
+  image_crop: ^0.3.4
 dev_dependencies:
   flutter_test:
     sdk: flutter

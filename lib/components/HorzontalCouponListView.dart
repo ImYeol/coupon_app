@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:coupon_app/model/Coupon.dart';
 import 'package:coupon_app/pages/CouponDescriptionPage.dart';
 import 'package:flutter/material.dart';
@@ -31,7 +33,7 @@ class HorizontalCouponListView extends StatelessWidget {
         itemBuilder: (ctx, index) {
           return InkWell(
             child: HorizontalCouponListViewItem(
-                coupon: coupons[index], height: height),
+                couponItem: coupons[index], height: height),
             onTap: //() => onTap(ctx, index),
                 () {
               print("item selected");
@@ -39,7 +41,7 @@ class HorizontalCouponListView extends StatelessWidget {
                   context,
                   MaterialPageRoute(
                       builder: (context) => CouponDescriptionPage(
-                            coupon: coupons[index],
+                            couponItem: coupons[index],
                           )));
             },
           );
@@ -50,11 +52,11 @@ class HorizontalCouponListView extends StatelessWidget {
 }
 
 class HorizontalCouponListViewItem extends StatelessWidget {
-  final Coupon coupon;
+  final CouponItem couponItem;
   final double width;
   final double height;
   const HorizontalCouponListViewItem(
-      {Key key, this.coupon, this.width, this.height})
+      {Key key, this.couponItem, this.width, this.height})
       : super(key: key);
 
   @override
@@ -75,15 +77,21 @@ class HorizontalCouponListViewItem extends StatelessWidget {
                 child: AspectRatio(
                     aspectRatio: 16 / 9,
                     child: Hero(
-                        tag: coupon.image + coupon.type.toString(),
-                        child: Image.asset(coupon.image,
-                            //package: product.assetPackage,
-                            fit: BoxFit.fitWidth))),
+                      tag: couponItem.image + couponItem.type.toString(),
+                      child: couponItem.image.substring(0, 7) == "images/"
+                          ? Image.asset(couponItem.image,
+                              //package: product.assetPackage,
+                              fit: BoxFit.fill)
+                          : Image.file(
+                              File(couponItem.image),
+                              fit: BoxFit.fill,
+                            ),
+                    )),
               ),
               Expanded(
                   child: Center(
                 child: Text(
-                  coupon.name,
+                  couponItem.name,
                   style: TextStyle(
                       fontSize: 10.0,
                       color: Colors.white,

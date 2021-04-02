@@ -8,9 +8,9 @@ import 'package:qr_flutter/qr_flutter.dart';
 import 'QRScanPage.dart';
 
 class CouponDescriptionPage extends StatelessWidget {
-  final Coupon coupon;
+  final CouponItem couponItem;
   final int couponCount;
-  const CouponDescriptionPage({Key key, this.coupon, this.couponCount})
+  const CouponDescriptionPage({Key key, this.couponItem, this.couponCount})
       : super(key: key);
 
   @override
@@ -105,7 +105,7 @@ class CouponDescriptionPage extends StatelessWidget {
       children: [
         Container(
             width: width - 150,
-            child: Text(coupon.name,
+            child: Text(couponItem.name,
                 overflow: TextOverflow.clip,
                 style: TextStyle(
                     color: Colors.white,
@@ -124,7 +124,7 @@ class CouponDescriptionPage extends StatelessWidget {
         ),
         Container(
             width: width - 150,
-            child: Text(coupon.description,
+            child: Text(couponItem.description,
                 overflow: TextOverflow.clip,
                 style: TextStyle(
                     color: Colors.white,
@@ -136,13 +136,13 @@ class CouponDescriptionPage extends StatelessWidget {
 
   Widget getCouponImage(double width, double height) {
     return Hero(
-        tag: coupon.image + coupon.type.toString(),
+        tag: couponItem.image + couponItem.type.toString(),
         child: Container(
           width: width,
           height: height,
           decoration: BoxDecoration(
             image: DecorationImage(
-                image: AssetImage(coupon.image), fit: BoxFit.fill),
+                image: AssetImage(couponItem.image), fit: BoxFit.fill),
           ),
           child: BackdropFilter(
               filter: ImageFilter.blur(sigmaX: 0.0, sigmaY: 0.0),
@@ -153,7 +153,7 @@ class CouponDescriptionPage extends StatelessWidget {
   Widget getQRCode() {
     return Center(
       child: QrImage(
-        data: coupon.name,
+        data: couponItem.name,
         version: QrVersions.auto,
         size: 100,
         gapless: false,

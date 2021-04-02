@@ -1,16 +1,34 @@
 import 'dart:io';
 
+import 'package:coupon_app/authentication/repository/CouponItemsRepository.dart';
+import 'package:coupon_app/bloc/coupon_bloc/CouponCubit.dart';
+import 'package:coupon_app/bloc/coupon_build_bloc/CouponBuildCubit.dart';
 import 'package:coupon_app/components/FlatBottomButton.dart';
 import 'package:coupon_app/components/OneLineInputWidget.dart';
+import 'package:coupon_app/model/Coupon.dart';
+import 'package:coupon_app/model/UserInfo.dart';
+import 'package:coupon_app/widgets/ImageCropEditor.dart';
 import 'package:flutter/material.dart';
 import 'package:image_crop/image_crop.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class CouponbuildPage extends StatefulWidget {
-  CouponbuildPage({Key key}) : super(key: key);
+  final CouponItemsRepository couponItemsRepository;
+
+  CouponbuildPage({Key key, this.couponItemsRepository}) : super(key: key);
 
   @override
   _CouponbuildPageState createState() => _CouponbuildPageState();
+
+  static Route route(CouponItemsRepository couponItemsRepository) {
+    return MaterialPageRoute<CouponItem>(
+      builder: (_) => BlocProvider(
+          create: (_) => CouponBuildCubit(couponItemsRepository),
+          child: CouponbuildPage(couponItemsRepository: couponItemsRepository)),
+    );
+    //CouponbuildPage(couponItemsRepository: couponItemsRepository));
+  }
 }
 
 class _CouponbuildPageState extends State<CouponbuildPage> {
@@ -18,6 +36,7 @@ class _CouponbuildPageState extends State<CouponbuildPage> {
   double _screenWidth;
   BuildContext _context;
   PickedFile _imageFile;
+  PickedFile _changedImageFile;
   dynamic _pickImageError;
   String _retrieveDataError;
   TextEditingController _couponTitleInputController;
@@ -26,23 +45,42 @@ class _CouponbuildPageState extends State<CouponbuildPage> {
   final ImagePicker _picker = ImagePicker();
 
   final cropKey = GlobalKey<CropState>();
+  final loadKey = GlobalKey<ImageCropEditorState>();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _couponDescriptionInputController = TextEditingController();
+    _couponTitleInputController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _couponDescriptionInputController?.dispose();
+    _couponTitleInputController?.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     _context = context;
     _screenHeight = MediaQuery.of(context).size.height;
     _screenWidth = MediaQuery.of(context).size.width;
-    return Scaffold(
-      backgroundColor: Theme.of(context).backgroundColor,
-      appBar: getAppBar(context),
-      body: getBody(),
-      bottomNavigationBar: getBottomButtons(),
-    );
-  }
 
-  @override
-  void dispose() {
-    super.dispose();
+    if (_imageFile == null) {
+      _pickImage();
+    }
+    print("pick image done");
+
+    return _imageFile == null
+        ? ImageCropEditor(key: loadKey, file: File(_imageFile.path))
+        : Scaffold(
+            backgroundColor: Theme.of(context).backgroundColor,
+            appBar: getAppBar(context),
+            body: getBody(),
+            bottomNavigationBar: getBottomButtons(),
+          );
   }
 
   Widget getAppBar(BuildContext context) {
@@ -64,7 +102,7 @@ class _CouponbuildPageState extends State<CouponbuildPage> {
             size: 25.0,
           ),
           onPressed: () {
-            Navigator.pop(context);
+            Navigator.pop(context, null);
           },
         ));
   }
@@ -80,7 +118,7 @@ class _CouponbuildPageState extends State<CouponbuildPage> {
                 children: [
               getImageArea(),
               SizedBox(
-                height: 40,
+                height: 10,
               ),
               Padding(
                   padding:
@@ -93,9 +131,6 @@ class _CouponbuildPageState extends State<CouponbuildPage> {
                     textEditingController: _couponTitleInputController,
                     maxLength: 10,
                   )),
-              SizedBox(
-                height: 40,
-              ),
               Padding(
                   padding:
                       EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
@@ -115,7 +150,7 @@ class _CouponbuildPageState extends State<CouponbuildPage> {
         height: _screenHeight * 2 / 5,
         color: Theme.of(_context).primaryColor,
         child: InkWell(
-            onTap: _pickImage,
+            onTap: () {},
             child: Stack(fit: StackFit.expand, children: [
               _previewImage(),
               _imageFile == null
@@ -149,6 +184,7 @@ class _CouponbuildPageState extends State<CouponbuildPage> {
     final area = cropKey.currentState.area;
     if (area == null) {
       // cannot crop, widget is not setup
+      print("crop area is not setup");
       return;
     }
 
@@ -256,7 +292,16 @@ class _CouponbuildPageState extends State<CouponbuildPage> {
       width: _screenWidth,
       text: "SAVE",
       onPressed: () {
-        print("Save button pressed");
+        print("Save button pressed" + _imageFile.path);
+        CouponItem item = CouponItem(
+            count: 0,
+            image: _imageFile.path,
+            description: _couponDescriptionInputController.text,
+            name: _couponTitleInputController.text,
+            type: CouponItem.RELEASEABLE_COUPON);
+        //widget.couponItemsRepository.buildCouponItem(item);
+        //_context.read<CouponBuildCubit>().buildCoupon(item);
+        Navigator.pop(_context, item);
         // Navigator.push(
         //     context, MaterialPageRoute(builder: (context) => QRScanPage()));
       },
